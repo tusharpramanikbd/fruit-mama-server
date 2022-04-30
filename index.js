@@ -3,6 +3,7 @@ require('dotenv').config()
 const { MongoClient, ServerApiVersion } = require('mongodb')
 const app = express()
 const cors = require('cors')
+const ObjectId = require('mongodb').ObjectId
 const port = process.env.PORT || 5000
 
 // Middleware
@@ -21,7 +22,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     await client.connect()
-    const usersCollection = client.db('fruitWarehouse').collection('fruits')
+    const fruitCollection = client.db('fruitWarehouse').collection('fruits')
 
     app.get('/', (req, res) => {
       res.send('Server running seccessfully')
@@ -29,9 +30,16 @@ async function run() {
 
     app.get('/fruits', async (req, res) => {
       const query = {}
-      const cursor = usersCollection.find(query)
+      const cursor = fruitCollection.find(query)
       const fruits = await cursor.toArray()
       res.send(fruits)
+    })
+
+    app.get('/fruits/:id', async (req, res) => {
+      const id = req.params.id
+      const query = { _id: ObjectId(id) }
+      const result = await fruitCollection.findOne(query)
+      res.send(result)
     })
   } finally {
     // await client.close()
