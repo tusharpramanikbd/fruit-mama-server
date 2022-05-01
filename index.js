@@ -42,6 +42,13 @@ async function run() {
       res.send(result)
     })
 
+    app.post('/fruits', async (req, res) => {
+      console.log('Request', req.body)
+      const newFruitItem = req.body
+      const result = await fruitCollection.insertOne(newFruitItem)
+      res.send(result)
+    })
+
     app.put('/fruits/:id', async (req, res) => {
       const id = req.params.id
       const updatedFruit = req.body
