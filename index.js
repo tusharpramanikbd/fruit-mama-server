@@ -29,7 +29,11 @@ async function run() {
     })
 
     app.get('/fruits', async (req, res) => {
-      const query = {}
+      let query = {}
+      if (req.query.email) {
+        const email = req.query.email.toLowerCase()
+        query = { email: email }
+      }
       const cursor = fruitCollection.find(query)
       const fruits = await cursor.toArray()
       res.send(fruits)
@@ -43,7 +47,6 @@ async function run() {
     })
 
     app.post('/fruits', async (req, res) => {
-      console.log('Request', req.body)
       const newFruitItem = req.body
       const result = await fruitCollection.insertOne(newFruitItem)
       res.send(result)
