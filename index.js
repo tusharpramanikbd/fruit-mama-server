@@ -24,6 +24,9 @@ async function run() {
     await client.connect()
     const fruitCollection = client.db('fruitWarehouse').collection('fruits')
     const salesCollection = client.db('fruitWarehouse').collection('sales')
+    const contactsCollection = client
+      .db('fruitWarehouse')
+      .collection('contacts')
 
     app.get('/', (req, res) => {
       res.send('Server running seccessfully')
@@ -57,6 +60,12 @@ async function run() {
     app.post('/fruits', async (req, res) => {
       const newFruitItem = req.body
       const result = await fruitCollection.insertOne(newFruitItem)
+      res.send(result)
+    })
+
+    app.post('/contact', async (req, res) => {
+      const newContact = req.body
+      const result = await contactsCollection.insertOne(newContact)
       res.send(result)
     })
 
