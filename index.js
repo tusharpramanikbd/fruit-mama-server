@@ -23,6 +23,7 @@ async function run() {
   try {
     await client.connect()
     const fruitCollection = client.db('fruitWarehouse').collection('fruits')
+    const salesCollection = client.db('fruitWarehouse').collection('sales')
 
     app.get('/', (req, res) => {
       res.send('Server running seccessfully')
@@ -37,6 +38,13 @@ async function run() {
       const cursor = fruitCollection.find(query)
       const fruits = await cursor.toArray()
       res.send(fruits)
+    })
+
+    app.get('/sales', async (req, res) => {
+      let query = {}
+      const cursor = salesCollection.find(query)
+      const sales = await cursor.toArray()
+      res.send(sales)
     })
 
     app.get('/fruits/:id', async (req, res) => {
