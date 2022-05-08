@@ -11,6 +11,7 @@ const port = process.env.PORT || 5000
 app.use(cors())
 app.use(express.json())
 
+// JWT token verification function
 const verifyJWT = (req, res, next) => {
   const authHeader = req.headers.authorization
   if (!authHeader) {
@@ -44,7 +45,7 @@ async function run() {
       .db('fruitWarehouse')
       .collection('contacts')
 
-    // Auth
+    // Signin Auth
     app.post('/signin', (req, res) => {
       const user = req.body
       const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
@@ -57,6 +58,7 @@ async function run() {
       res.send('Server running seccessfully')
     })
 
+    // Get all the fruits
     app.get('/fruits', async (req, res) => {
       let query = {}
       const cursor = fruitCollection.find(query)
@@ -64,6 +66,8 @@ async function run() {
       res.send(fruits)
     })
 
+    // Get all the fruits by email
+    // Authentication is needed
     app.get('/fruitsbyemail', verifyJWT, async (req, res) => {
       const decodedEmail = req.decoded.email
       const email = req.query.email.toLowerCase()
@@ -77,6 +81,7 @@ async function run() {
       }
     })
 
+    // Get the list the sales
     app.get('/sales', async (req, res) => {
       let query = {}
       const cursor = salesCollection.find(query)
@@ -84,6 +89,7 @@ async function run() {
       res.send(sales)
     })
 
+    // get the fruit item by id
     app.get('/fruits/:id', async (req, res) => {
       const id = req.params.id
       const query = { _id: ObjectId(id) }
@@ -91,18 +97,21 @@ async function run() {
       res.send(result)
     })
 
+    // Add new fruit item to database
     app.post('/fruits', async (req, res) => {
       const newFruitItem = req.body
       const result = await fruitCollection.insertOne(newFruitItem)
       res.send(result)
     })
 
+    // Add new contact item to database
     app.post('/contact', async (req, res) => {
       const newContact = req.body
       const result = await contactsCollection.insertOne(newContact)
       res.send(result)
     })
 
+    // Update fruit item quantity by id
     app.put('/fruits/:id', async (req, res) => {
       const id = req.params.id
       const updatedFruit = req.body
@@ -121,6 +130,7 @@ async function run() {
       res.send(result)
     })
 
+    // Delete single fruit item by id
     app.delete('/fruits/:id', async (req, res) => {
       const id = req.params.id
       const query = { _id: ObjectId(id) }
